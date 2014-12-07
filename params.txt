@@ -1,0 +1,2 @@
+GIT_REPO_PATH='https://github.com/juasiepo/PuppetInstallPartyGitRepo.git' #Default value. Populate it with your Git repository path
+PUPPETMASTER_HOSTNAME=''  # Populate it with your puppet master hostname

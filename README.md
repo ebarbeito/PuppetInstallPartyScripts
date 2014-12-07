@@ -11,6 +11,7 @@ Install and configures the Puppet Master on a Debian Server
 ./InstallPuppetMaster.sh puppetmaster.example.org
 
 An screencast can be seen on the following link:
+
 https://asciinema.org/a/14495
 
 InstallPuppetClient.sh
@@ -20,6 +21,7 @@ Install and configures the Puppet Client on a Debian Server
 ./InstallPuppetClient.sh puppetclient.example.org
 
 An screencast can be seen on the following link:
+
 https://asciinema.org/a/14496
 
 params.txt

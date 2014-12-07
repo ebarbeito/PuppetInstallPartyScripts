@@ -31,3 +31,5 @@ Contains the default parameters to be used by both scripts
 Those parameters are:
 GIT_REPO_PATH='https://github.com/juasiepo/PuppetInstallPartyGitRepo.git' #Default value. Populate it with your Git repository path
 PUPPETMASTER_HOSTNAME=''  # Populate it with your puppet master hostname
+
+The git repository used on the example can be cloned from: https://github.com/juasiepo/PuppetInstallPartyGitRepo

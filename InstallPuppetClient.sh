@@ -19,11 +19,17 @@ PACKAGES="puppet htop tmux vim iotop chkconfig"
 # Load up the release information
 PUPPET_RELEASE="puppetlabs-release-wheezy.deb"
 REPO_DEB_URL="http://apt.puppetlabs.com/${PUPPET_RELEASE}"
+if [ -z "$2" ]
+then
+	PORT="22"
+else
+	PORT="$2"
+fi
 
 # Starting the Process #
 
 echo "=== Installing and configuring the Puppet client ==="
-ssh -o StrictHostKeyChecking=no -T root@$HOSTNAME << EOF
+ssh -p$PORT -o StrictHostKeyChecking=no -T root@$HOSTNAME << EOF
 wget ${REPO_DEB_URL} >/dev/null && \
 dpkg -i ${PUPPET_RELEASE} && \
 rm -f ${PUPPET_RELEASE} && \
@@ -39,7 +45,7 @@ if [ $? != 0 ]; then
 fi
 
 echo "=== Signing SSL certificate on the Puppet Master  ==="
-ssh -o StrictHostKeyChecking=no -T root@${PUPPETMASTER_HOSTNAME} << EOF
+ssh -p$PORT -o StrictHostKeyChecking=no -T root@${PUPPETMASTER_HOSTNAME} << EOF
 puppet cert list |grep ${HOSTNAME} && puppet cert --sign ${HOSTNAME}
 EOF
 if [ $? != 0 ]; then
@@ -48,7 +54,7 @@ if [ $? != 0 ]; then
 fi
 
 echo "=== Configuring the Puppet client to run as a daemon ==="
-ssh -o StrictHostKeyChecking=no -T root@$HOSTNAME << EOF
+ssh -p$PORT -o StrictHostKeyChecking=no -T root@$HOSTNAME << EOF
 sed -i 's/START=no/START=yes/' /etc/default/puppet && \
 chkconfig puppet on
 service puppet start

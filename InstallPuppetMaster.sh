@@ -19,11 +19,17 @@ PACKAGES="puppetserver htop tmux vim iotop chkconfig"
 # Load up the release information
 PUPPET_RELEASE="puppetlabs-release-wheezy.deb"
 REPO_DEB_URL="http://apt.puppetlabs.com/${PUPPET_RELEASE}"
+if [ -z "$2" ]
+then
+	PORT="22"
+else
+	PORT="$2"
+fi
 
 # Starting the Process #
 
 echo "=== Installing and configuring the Puppet master ==="
-ssh -o StrictHostKeyChecking=no -T root@$HOSTNAME << EOF
+ssh -p$PORT -o StrictHostKeyChecking=no -T root@$HOSTNAME << EOF
 wget ${REPO_DEB_URL} >/dev/null && \
 dpkg -i ${PUPPET_RELEASE} && \
 rm -f ${PUPPET_RELEASE} && \
@@ -39,7 +45,7 @@ if [ $? != 0 ]; then
 fi
 
 echo "=== Installing and configuring R10k ==="
-ssh -o StrictHostKeyChecking=no -T root@$HOSTNAME << EOF
+ssh -p$PORT -o StrictHostKeyChecking=no -T root@$HOSTNAME << EOF
 gem install r10k  && \
 echo '# The location to use for storing cached Git repos' >> /etc/r10k.yaml && \
 echo ":cachedir: '/var/cache/r10k'" >> /etc/r10k.yaml && \
@@ -58,7 +64,7 @@ if [ $? != 0 ]; then
 fi
 
 echo "=== Configuring Hiera ==="
-ssh -o StrictHostKeyChecking=no -T root@$HOSTNAME << EOF
+ssh -p$PORT -o StrictHostKeyChecking=no -T root@$HOSTNAME << EOF
 echo "---" > /etc/hiera.yaml && \
 echo ":backends:" >> /etc/hiera.yaml && \
 echo "  - yaml" >> /etc/hiera.yaml && \
@@ -79,7 +85,7 @@ if [ $? != 0 ]; then
 fi
 
 echo "=== Populating the first production environment from git repo ==="
-ssh -o StrictHostKeyChecking=no -T root@$HOSTNAME << EOF
+ssh -p$PORT -o StrictHostKeyChecking=no -T root@$HOSTNAME << EOF
 r10k deploy environment -p && \
 chown -R puppet:puppet /etc/puppet/environments/production && \
 rm -rf /var/lib/puppet/ssl && \
@@ -92,7 +98,7 @@ if [ $? != 0 ]; then
 fi
 
 echo "=== Configuring the Puppet client to run as a daemon ==="
-ssh -o StrictHostKeyChecking=no -T root@$HOSTNAME << EOF
+ssh -p$PORT -o StrictHostKeyChecking=no -T root@$HOSTNAME << EOF
 sed -i 's/START=no/START=yes/' /etc/default/puppet && \
 chkconfig puppet on
 EOF
